@@ -4,6 +4,8 @@ import org.apache.commons.math3.linear.*;
 
 import org.apache.commons.math3.analysis.integration.*;
 import org.apache.commons.math3.analysis.UnivariateFunction;
+import org.apache.commons.math3.analysis.solvers.BrentSolver;
+import org.apache.commons.math3.exception.TooManyEvaluationsException;
 
 public class Segment {
 
@@ -77,25 +79,39 @@ public class Segment {
      * Returns s(t) *
      */
     public double getDisplacementAtParameter(double t) {
+        if (t == 0.0) return 0;
         return integrator.integrate(Integer.MAX_VALUE, function, 0, t);
     }
 
     /*
-     * Calculates at which t in [0,1] we have a particular displacement
-     * Returns t(s)
-     * Somewhat inefficient at the moment but its fine
+     * Calculates at which t in [0,1] we have a particular displacement s0
+     * Returns t such that s(t) = s0
+     * Finds the root of the function s(t) - s0 = 0 using Brent's method
      */
-    public double getParameterAtDisplacement(double s) {
-        if (!Utilities.inRange(s, 0, this.length(), 0.01)) {
+    public double getParameterAtDisplacement(double s0) {
+        if (!Utilities.inRange(s0, 0, this.length(), 0.01)) {
             System.out.println("Incorrect displacement provided");
             System.exit(-1); //bail
         }
-        double t = customTrapezoidal(0, 1, 2000, s);
-        if (t == -1) {
-            System.out.println("This should not show. Check the getParameterAtDisplacement function");
-            System.exit(-1); //bail
+        // Stop these edge cases from reaching the Brent solver
+        if (s0 < 0.01) return 0;
+        if (this.length() - s0 < 0.01) return 1;
+        UnivariateFunction f = t -> (getDisplacementAtParameter(t) - s0);
+        BrentSolver brentSolver = new BrentSolver();
+        try {
+            double root = brentSolver.solve(1000, f, 0.0, 1.0);
+            return root;
+        } catch (TooManyEvaluationsException e) {
+            System.out.println("Brent solver reached the maximum number of evaluations.");
+            System.exit(-1); // bail
         }
-        return t;
+        return -1;
+        // double t = customTrapezoidal(0, 1, 2000, s);
+        // if (t == -1) {
+        //     System.out.println("This should not show. Check the getParameterAtDisplacement function");
+        //     System.exit(-1); //bail
+        // }
+        // return t;
     }
 
     public void calculateXCoeffs(double x, double x1, double x2, double xn, double xn1, double xn2) {
@@ -112,6 +128,7 @@ public class Segment {
         this.y_poly.setCoeffs(solution.toArray());
     }
 
+    @Deprecated
     private double customTrapezoidal(double x0, double xn, int n, double stop) {
         double eps = 0.3;
         double h = (xn - x0) / n;

@@ -20,6 +20,7 @@ public class Path {
     }
 
     public Path(ArrayList<Vector2D> points) {
+        long startTime = System.currentTimeMillis();
         segments = new ArrayList<>();
         if (points.size() < 2)
             return;
@@ -60,6 +61,8 @@ public class Path {
             double len = a.length();
             length += len;
         }
+        long buildTime = System.currentTimeMillis() - startTime;
+        System.out.println("Path built in " + buildTime + " ms.");
     }
 
     private ImmutablePair<Segment, Double> getCorrectSegment(double disp) {

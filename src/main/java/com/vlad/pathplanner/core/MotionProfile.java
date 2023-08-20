@@ -31,6 +31,7 @@ public class MotionProfile {
     }
 
     public void makeProfile(double startVelocity, double endVelocity, double startAcceleration, double endAcceleration, int numPoints) {
+        long startTime = System.currentTimeMillis();
         double[] space = Utilities.linspace(0.0, this.path.getLength(), numPoints);
         // Place velocity planning points on the path
         for (double s : space) {
@@ -122,5 +123,7 @@ public class MotionProfile {
             prevTime = currentTime;
         }
         this.duration = currentTime;
+        long buildTime = System.currentTimeMillis() - startTime;
+        System.out.println("Profile built in " + buildTime + " ms.");
     }
 }
