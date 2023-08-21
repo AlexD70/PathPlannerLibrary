@@ -3,6 +3,8 @@ package com.vlad.pathplanner.core;
 import java.util.ArrayList;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
+import com.vlad.pathplanner.Console;
+
 /**
  * A path contains a list of segments
  * and displacement along the path
@@ -62,7 +64,8 @@ public class Path {
             length += len;
         }
         long buildTime = System.currentTimeMillis() - startTime;
-        System.out.println("Path built in " + buildTime + " ms.");
+        // System.out.println("Path built in " + buildTime + " ms.");
+        Console.getInstance().addLine("> Path built in " + buildTime + " ms.\n");
     }
 
     private ImmutablePair<Segment, Double> getCorrectSegment(double disp) {

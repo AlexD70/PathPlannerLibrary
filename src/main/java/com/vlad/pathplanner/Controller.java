@@ -77,6 +77,7 @@ public class Controller {
         original.setSelected(true);
         simplified.setSelected(true);
         chart.getData().clear();
+        Console.getInstance().clearConsole();
     }
 
     public void simplify() {
@@ -201,9 +202,11 @@ public class Controller {
         chart.setCreateSymbols(false);
         chart.setAxisSortingPolicy(LineChart.SortingPolicy.NONE);
 
-        console.appendText("> Path planning Demo GUI by Vlad Chira.\n");
-        console.appendText("> Usage: Draw a path using the mouse, then press RDP followed by Spline.\n");
-        console.appendText("> Usage: Press the Generate Profile button to create a motion profile based on the path.\n");
+        Console.getInstance().setController(this);
+
+        Console.getInstance().addLine("> Path planning Demo GUI by Vlad Chira.\n");
+        Console.getInstance().addLine("> Usage: Draw a path using the mouse, then press RDP followed by Spline.\n");
+        Console.getInstance().addLine("> Usage: Press the Generate Profile button to create a motion profile based on the path.\n");
 
         canvasRenderer = new CanvasRenderer(canvas);
         canvasRenderer.start();
