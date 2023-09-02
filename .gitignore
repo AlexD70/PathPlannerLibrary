@@ -23,4 +23,10 @@
 hs_err_pid*
 replay_pid*
 
+*.hprof
+
 target/
+build/
+.gradle/
+.vscode/
+.idea/

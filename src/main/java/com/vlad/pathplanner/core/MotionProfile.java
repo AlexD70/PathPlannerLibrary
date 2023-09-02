@@ -2,8 +2,6 @@ package com.vlad.pathplanner.core;
 
 import java.util.ArrayList;
 
-import com.vlad.pathplanner.Console;
-
 public class MotionProfile {
     private double maxVelocity;
     private double maxAcceleration;
@@ -126,8 +124,6 @@ public class MotionProfile {
         }
         this.duration = currentTime;
         long buildTime = System.currentTimeMillis() - startTime;
-        // System.out.println("Profile built in " + buildTime + " ms.");
-        Console.getInstance().addLine("> Profile built in " + buildTime + " ms.\n");
-        Console.getInstance().addLine("> Total profile duration: " + String.format("%.2f", this.duration) + " s.\n");
+        //System.out.println("Profile built in " + buildTime + " ms.");
     }
 }
