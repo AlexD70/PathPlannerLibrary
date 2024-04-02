@@ -32,7 +32,7 @@ public class MotionProfile {
 
     public void makeProfile(double startVelocity, double endVelocity, double startAcceleration, double endAcceleration, int numPoints) {
         long startTime = System.currentTimeMillis();
-        double[] space = Utilities.linspace(0.0, this.path.getLength(), numPoints);
+        double[] space = Utilities.generateLinear(0.0, this.path.getLength(), numPoints);
         // Place velocity planning points on the path
         for (double s : space) {
             double planningVelocity = this.maxVelocity;
@@ -86,7 +86,7 @@ public class MotionProfile {
 
         // ----- TIME PROFILE CREATION-----
         Vector2D tangentVector = this.path.getFirstDerivAtDisplacement(0);
-        tangentVector.div(tangentVector.mag());
+        tangentVector.div(tangentVector.abs());
 
         this.timeProfileX.add(new KinematicState(0, 0, startVelocity * tangentVector.x, 
             startAcceleration * tangentVector.x, 0));
@@ -107,7 +107,7 @@ public class MotionProfile {
             currentTime += dt;
 
             tangentVector = this.path.getFirstDerivAtDisplacement(currentPoint.x);
-            tangentVector.div(tangentVector.mag());
+            tangentVector.div(tangentVector.abs());
 
             double vx = currentVel * tangentVector.x;
             double vy = currentVel * tangentVector.y;

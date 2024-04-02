@@ -3,16 +3,18 @@ package com.vlad.pathplanner.core;
 public class Utilities {
     public static double INF = 999999999;
 
+    // less complicated now
     public static double getSlopeOfAngleBisector(Vector2D p1, Vector2D p2, Vector2D p3) {
-        double abx = angleBisectorX(p1, p2, p3);
-        double aby = angleBisectorY(p1, p2, p3);
-        double x1 = p2.x - INF * (abx - p2.x);
-        double y1 = p2.y - INF * (aby - p2.y);
-        double x2 = abx + INF * (abx - p2.x);
-        double y2 = aby + INF * (aby - p2.y);
-        return (y2 - y1) / (x2 - x1);
+        double slope1 = (p1.y - p2.y) / (p1.x - p2.x);
+        double slope2 = (p2.y - p3.y) / (p2.x - p3.x);
+
+        slope1 = Math.atan(slope1);
+        slope2 = Math.atan(slope2);
+
+        return Math.tan((slope1 + slope2)/2);
     }
 
+    // what???
     private static double angleBisectorX(Vector2D p1, Vector2D p2, Vector2D p3) {
         double d1 = Vector2D.dist(p1, p2);
         double d3 = Vector2D.dist(p2, p3);
@@ -27,6 +29,7 @@ public class Utilities {
         return x2;
     }
 
+    // again what???
     private static double angleBisectorY(Vector2D p1, Vector2D p2, Vector2D p3) {
         double d1 = Vector2D.dist(p1, p2);
         double d3 = Vector2D.dist(p2, p3);
@@ -45,11 +48,17 @@ public class Utilities {
         return a - eps <= x && x <= b + eps;
     }
 
-    public static double[] linspace(double min, double max, int points) {  
-        double[] d = new double[points];  
-        for (int i = 0; i < points; i++){  
-            d[i] = min + i * (max - min) / (points - 1);  
-        }  
-        return d;  
+    // optimized - now step is computed only once
+    public static double[] generateLinear(double min, double max, int points) {
+        double step = (max - min) / (points - 1);
+        double[] d = new double[points];
+
+        d[0] = min;
+        for (int i = 1; i < points - 1; i++){
+            d[i] = d[i - 1] + step;
+        }
+        d[points - 1] = max;
+
+        return d;
     }  
 }

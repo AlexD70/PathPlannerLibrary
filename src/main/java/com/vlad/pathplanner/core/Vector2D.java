@@ -2,6 +2,8 @@ package com.vlad.pathplanner.core;
 
 import java.io.Serializable;
 
+// why serializable?
+// why vector??? this looks like a point to me
 public class Vector2D implements Serializable {
     public double x;
     public double y;
@@ -30,7 +32,7 @@ public class Vector2D implements Serializable {
         return v1.x * v2.x + v1.y * v2.y;
     }
 
-    public double mag() {
+    public double abs() {
         return Math.sqrt(this.x * this.x + this.y * this.y);
     }
 
@@ -89,7 +91,7 @@ public class Vector2D implements Serializable {
     }
 
     public Vector2D normalize() {
-        final double m = this.mag();
+        final double m = this.abs();
         if (m != 0 && m != 1.0) {
             this.div(m);
         }

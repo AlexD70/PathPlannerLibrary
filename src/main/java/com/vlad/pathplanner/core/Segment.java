@@ -1,5 +1,7 @@
 package com.vlad.pathplanner.core;
 
+import com.vlad.pathplanner.v2.Point2d;
+
 import org.apache.commons.math3.linear.*;
 
 import org.apache.commons.math3.analysis.integration.*;
@@ -37,39 +39,42 @@ public class Segment {
     public double length() {
         if (len == -1)
             len = getDisplacementAtParameter(1);
-        return len;
+        return len; // who is len? what does it mean?
     }
 
-    public Vector2D getPointAtParameter(double t) {
-        return new Vector2D(x_poly.eval(t), y_poly.eval(t));
+    public Point2d getPointAtTimeMoment(double t) {
+        return new Point2d(x_poly.eval(t), y_poly.eval(t));
     }
 
-    public Vector2D getPointAtDisplacement(double s) {
-        if (!Utilities.inRange(s, 0, this.length(), 0.01)) {
-            System.out.println("Incorrect displacement provided");
-            System.exit(-1); //bail
+    public Point2d getPointAtDisplacement(double s) { // maybe theres a better way of doing this one???
+        if (!Utilities.inRange(s, 0, this.length(), 0)) {
+//            System.out.println("Incorrect displacement provided");
+//            System.exit(-1); //bail this should raise some exception. For now let it be a RuntimeException
+            throw new RuntimeException("Displacement out of range!");
         }
-        return this.getPointAtParameter(this.getParameterAtDisplacement(s));
+
+        return this.getPointAtTimeMoment(this.getTimeMomentAtDisplacement(s));
     }
 
-    public Vector2D getFirstDerivAtParameter(double t) {
-        return new Vector2D(x_poly.getFirstDerivative().eval(t), y_poly.getFirstDerivative().eval(t));
+    public Point2d getFirstDerivAtTimeMoment(double t) { // maybe map these as sth else rather than points
+        return new Point2d(x_poly.getFirstDerivative().eval(t), y_poly.getFirstDerivative().eval(t));
     }
 
-    public Vector2D getSecondDerivAtParameter(double t) {
-        return new Vector2D(x_poly.getSecondDerivative().eval(t), y_poly.getSecondDerivative().eval(t));
+    public Point2d getSecondDerivAtTimeMoment(double t) { // see above
+        return new Point2d(x_poly.getSecondDerivative().eval(t), y_poly.getSecondDerivative().eval(t));
     }
 
-    public double getSlopeAtParameter(double t) {
-        Vector2D tangent_vector = this.getFirstDerivAtParameter(t);
-        if (Math.abs(tangent_vector.x) < 0.01)
-            return Double.POSITIVE_INFINITY;
-        return tangent_vector.y / tangent_vector.x;
+    public double getSlopeAtTimeMoment(double t) {
+        Point2d tangentPoint = this.getFirstDerivAtTimeMoment(t);
+//        if (Math.abs(tangentPoint.x) < 0.01) // redundant check
+//            return Double.POSITIVE_INFINITY;
+        return tangentPoint.y / tangentPoint.x; // dy/dx slope
     }
 
-    private double getUnitArcLength(double tau) {
-        double xsquared = this.x_poly.getSecondDerivative().eval(tau) * this.x_poly.getSecondDerivative().eval(tau);
-        double ysquared = this.y_poly.getSecondDerivative().eval(tau) * this.y_poly.getSecondDerivative().eval(tau);
+    private double getUnitArcLength(double tau) { // what does this have to do with the unit circle???
+        // this is just the absolute value of the position vector in xOy at moment tau
+        double xsquared = Math.pow(this.x_poly.getSecondDerivative().eval(tau), 2);
+        double ysquared = Math.pow(this.y_poly.getSecondDerivative().eval(tau), 2);
         return Math.sqrt(xsquared + ysquared);
     }
 
@@ -81,6 +86,12 @@ public class Segment {
     public double getDisplacementAtParameter(double t) {
         if (t == 0.0) return 0;
         return integrator.integrate(Integer.MAX_VALUE, function, 0, t);
+        // isnt the integral of a quintic polynomial determined by a formula?
+        // why use an integrator for it???
+
+        // ax^5 + bx^4 + cx^3 + dx^2 + ex + f
+        // indefinite integral: g(x) = ax^6/6 + bx^5/5 + cx^4/4 + dx^3/3 + ex^2/2 + fx + C
+        // integral from 0 to t: g(t) - g(0)
     }
 
     /*
@@ -88,7 +99,7 @@ public class Segment {
      * Returns t such that s(t) = s0
      * Finds the root of the function s(t) - s0 = 0 using Brent's method
      */
-    public double getParameterAtDisplacement(double s0) {
+    public double getTimeMomentAtDisplacement(double s0) {
         if (!Utilities.inRange(s0, 0, this.length(), 0.01)) {
             System.out.println("Incorrect displacement provided");
             System.exit(-1); //bail

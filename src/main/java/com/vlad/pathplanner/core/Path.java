@@ -103,10 +103,10 @@ public class Path {
         ImmutablePair<Segment, Double> pair = getCorrectSegment(s);
         Segment correctSegment = pair.left;
         double relative_disp = pair.right;
-        double t = correctSegment.getParameterAtDisplacement(relative_disp);
-        Vector2D rt1 = correctSegment.getFirstDerivAtParameter(t);
-        Vector2D rt2 = correctSegment.getSecondDerivAtParameter(t);
-        return Vector2D.absCross(rt1, rt2) / (Math.pow(rt1.copy().mag(), 3));
+        double t = correctSegment.getTimeMomentAtDisplacement(relative_disp);
+        Vector2D rt1 = correctSegment.getFirstDerivAtTimeMoment(t);
+        Vector2D rt2 = correctSegment.getSecondDerivAtTimeMoment(t);
+        return Vector2D.absCross(rt1, rt2) / (Math.pow(rt1.copy().abs(), 3));
     }
 
     public double getSlopeAtDisplacement(double s) {
@@ -114,8 +114,8 @@ public class Path {
         ImmutablePair<Segment, Double> pair = getCorrectSegment(s);
         Segment correctSegment = pair.left;
         double relative_disp = pair.right;
-        double t = correctSegment.getParameterAtDisplacement(relative_disp);
-        return correctSegment.getSlopeAtParameter(t);
+        double t = correctSegment.getTimeMomentAtDisplacement(relative_disp);
+        return correctSegment.getSlopeAtTimeMoment(t);
     }
 
     public Vector2D getFirstDerivAtDisplacement(double s) {
@@ -123,8 +123,8 @@ public class Path {
         ImmutablePair<Segment, Double> pair = getCorrectSegment(s);
         Segment correctSegment = pair.left;
         double relative_disp = pair.right;
-        double t = correctSegment.getParameterAtDisplacement(relative_disp);
-        Vector2D rt = correctSegment.getFirstDerivAtParameter(t);
+        double t = correctSegment.getTimeMomentAtDisplacement(relative_disp);
+        Vector2D rt = correctSegment.getFirstDerivAtTimeMoment(t);
         return rt.copy().normalize();
     }
 

@@ -30,3 +30,5 @@ build/
 .gradle/
 .vscode/
 .idea/
+
+local.properties
